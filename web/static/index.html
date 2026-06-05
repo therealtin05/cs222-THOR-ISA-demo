@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>THOR-ISA Demo</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #1a2332;
+      --border: #2d3a4f;
+      --text: #e7ecf3;
+      --muted: #8b9cb3;
+      --accent: #3d8bfd;
+      --positive: #3dd68c;
+      --negative: #f87171;
+      --neutral: #fbbf24;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 2rem 1rem;
+      line-height: 1.5;
+    }
+    .wrap { max-width: 900px; margin: 0 auto; }
+    h1 { font-size: 1.75rem; margin: 0 0 0.25rem; }
+    .sub { color: var(--muted); margin-bottom: 0.5rem; font-size: 0.95rem; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    label { display: block; font-weight: 600; margin-bottom: 0.35rem; font-size: 0.9rem; }
+    textarea, input, select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.95rem;
+    }
+    textarea { min-height: 100px; resize: vertical; }
+    .row { display: grid; gap: 1rem; }
+    @media (min-width: 600px) {
+      .row-2 { grid-template-columns: 1fr 1fr; }
+      .row-3 { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    .modes { display: flex; flex-wrap: wrap; gap: 1.25rem; margin: 0.75rem 0; align-items: flex-start; }
+    .mode-opt {
+      font-weight: normal;
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .mode-opt input {
+      margin: 0;
+      flex-shrink: 0;
+      width: 1rem;
+      height: 1rem;
+    }
+    .mode-label {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+    .mode-name { font-weight: 600; font-size: 0.95rem; }
+    .mode-sub { font-size: 0.8rem; color: var(--muted); font-weight: normal; }
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.65rem 1.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    button:disabled { opacity: 0.6; cursor: wait; }
+    button.secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      margin-left: 0.5rem;
+    }
+    .status, .stats { font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem; }
+    .result-polarity {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-transform: capitalize;
+      margin: 0.5rem 0;
+    }
+    .result-polarity.positive { color: var(--positive); }
+    .result-polarity.negative { color: var(--negative); }
+    .result-polarity.neutral { color: var(--neutral); }
+    .step {
+      border-left: 3px solid var(--accent);
+      padding-left: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .step h4 { margin: 0 0 0.25rem; font-size: 0.95rem; }
+    .step pre {
+      background: var(--bg);
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .gold, .note { font-size: 0.85rem; color: var(--muted); }
+    .hidden { display: none; }
+    optgroup { font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>THOR-ISA Demo</h1>
+    <p class="sub">Implicit sentiment · Flan-T5-base &amp; large (both loaded on GPU)</p>
+    <p class="status" id="health">Loading…</p>
+    <p class="stats hidden" id="compareStats"></p>
+
+    <div class="card">
+      <div class="row row-3">
+        <div>
+          <label for="modelId">Model</label>
+          <select id="modelId">
+            <option value="base">Flan-T5-base (~248M)</option>
+            <option value="large">Flan-T5-large (~780M)</option>
+          </select>
+        </div>
+        <div>
+          <label for="examples">Example</label>
+          <select id="examples">
+            <option value="">— Custom input —</option>
+          </select>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button type="button" class="secondary" id="compareBothBtn" title="Run THOR and 1-step on same input">Compare both modes</button>
+        </div>
+      </div>
+      <p class="gold hidden" id="goldLabel"></p>
+      <p class="note hidden" id="exampleNote"></p>
+
+      <div class="row row-2" style="margin-top: 1rem;">
+        <div>
+          <label for="text">Sentence</label>
+          <textarea id="text" placeholder="Enter a review sentence…"></textarea>
+        </div>
+        <div>
+          <label for="target">Target aspect <span id="targetHint" class="gold"></span></label>
+          <input id="target" type="text" placeholder="e.g. price tag — leave blank to infer aspect" />
+        </div>
+      </div>
+
+      <div class="modes">
+        <label class="mode-opt">
+          <input type="radio" name="mode" value="thor" checked />
+          <span class="mode-label">
+            <span class="mode-name">THOR</span>
+            <span class="mode-sub">(3-hop)</span>
+          </span>
+        </label>
+        <label class="mode-opt">
+          <input type="radio" name="mode" value="prompt" />
+          <span class="mode-label">
+            <span class="mode-name">Prompt</span>
+            <span class="mode-sub">(1-step)</span>
+          </span>
+        </label>
+      </div>
+
+      <button id="runBtn">Analyze sentiment</button>
+    </div>
+
+    <div class="card hidden" id="resultCard">
+      <h2 style="margin-top:0;font-size:1.1rem;">Result</h2>
+      <div class="result-polarity" id="polarity"></div>
+      <div id="steps"></div>
+    </div>
+
+    <div class="card hidden" id="compareCard">
+      <h2 style="margin-top:0;font-size:1.1rem;">THOR vs 1-step (same model)</h2>
+      <div id="compareResults"></div>
+    </div>
+  </div>
+
+  <script>
+    const examplesEl = document.getElementById('examples');
+    const modelIdEl = document.getElementById('modelId');
+    const textEl = document.getElementById('text');
+    const targetEl = document.getElementById('target');
+    const goldLabel = document.getElementById('goldLabel');
+    const exampleNote = document.getElementById('exampleNote');
+    const runBtn = document.getElementById('runBtn');
+    const compareBothBtn = document.getElementById('compareBothBtn');
+    const resultCard = document.getElementById('resultCard');
+    const compareCard = document.getElementById('compareCard');
+    const polarityEl = document.getElementById('polarity');
+    const stepsEl = document.getElementById('steps');
+    const compareResults = document.getElementById('compareResults');
+    const healthEl = document.getElementById('health');
+    const compareStatsEl = document.getElementById('compareStats');
+    const targetHintEl = document.getElementById('targetHint');
+
+    let exampleMap = {};
+
+    function resolveSetup() {
+      return targetEl.value.trim() ? 'given_target' : 'no_target';
+    }
+
+    function updateTargetHint() {
+      targetHintEl.textContent = resolveSetup() === 'no_target'
+        ? '— blank: infers aspect automatically'
+        : '';
+    }
+
+    targetEl.addEventListener('input', updateTargetHint);
+    updateTargetHint();
+
+    async function loadHealth() {
+      try {
+        const r = await fetch('/api/health');
+        const h = await r.json();
+        const loaded = Object.entries(h.models || {})
+          .filter(([, v]) => v.loaded)
+          .map(([k]) => k)
+          .join(', ');
+        healthEl.textContent = `${h.device} · loaded: ${loaded || 'none'} · VRAM ${h.vram_allocated_mb ?? '?'} MB`;
+      } catch (e) {
+        healthEl.textContent = 'Could not reach API';
+      }
+    }
+
+    function addOptionGroup(label, items) {
+      if (!items.length) return;
+      const og = document.createElement('optgroup');
+      og.label = label;
+      items.forEach((ex) => {
+        exampleMap[ex.id] = ex;
+        const opt = document.createElement('option');
+        opt.value = ex.id;
+        const tag = ex.category === 'thor_wins' ? '✓THOR ' : ex.category === 'prompt_wins' ? '✓1-step ' : '';
+        opt.textContent = `${tag}[${ex.domain}] ${ex.target} — ${ex.text.slice(0, 50)}…`;
+        og.appendChild(opt);
+      });
+      examplesEl.appendChild(og);
+    }
+
+    async function loadExamples() {
+      const r = await fetch('/api/examples');
+      const data = await r.json();
+      addOptionGroup('Curated implicit (gold labels)', data.curated || []);
+      addOptionGroup('Base: THOR correct, 1-step wrong', data.thor_wins || []);
+      addOptionGroup('Base: 1-step correct, THOR wrong', data.prompt_wins || []);
+
+
+    examplesEl.addEventListener('change', () => {
+      const ex = exampleMap[examplesEl.value];
+      exampleNote.classList.add('hidden');
+      if (!ex) {
+        goldLabel.classList.add('hidden');
+        return;
+      }
+      textEl.value = ex.text;
+      targetEl.value = ex.target;
+      goldLabel.textContent = `Gold label: ${ex.gold_polarity}`;
+      goldLabel.classList.remove('hidden');
+      if (ex.note) {
+        exampleNote.textContent = ex.note;
+        exampleNote.classList.remove('hidden');
+      }
+      updateTargetHint();
+    });
+
+    async function runPredict(mode) {
+      const text = textEl.value.trim();
+      const target = targetEl.value.trim();
+      const model_id = modelIdEl.value;
+      const setup = resolveSetup();
+      const r = await fetch('/api/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, target, mode, model_id, setup }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.detail || 'Request failed');
+      return data;
+    }
+
+    function renderSteps(data) {
+        const stepNames = {
+          target_discovery: 'Step 0 — Discover target/aspect',
+          aspect: 'Step 1 — Fine-grained aspect',
+          opinion: 'Step 2 — Opinion',
+          polarity_reason: 'Step 3 — Polarity reasoning',
+          label: 'Step 4 — Final label',
+          direct: 'Direct prompt (target given)',
+          direct_no_target: 'Direct prompt (no target)',
+        };
+      stepsEl.innerHTML = (data.steps || []).map((s) => `
+        <div class="step">
+          <h4>${stepNames[s.name] || s.name}</h4>
+          <pre><strong>Prompt:</strong> ${escapeHtml(s.prompt)}\n<strong>Output:</strong> ${escapeHtml(s.output)}</pre>
+        </div>
+      `).join('');
+    }
+
+    runBtn.addEventListener('click', async () => {
+      const text = textEl.value.trim();
+      const target = targetEl.value.trim();
+      const mode = document.querySelector('input[name="mode"]:checked').value;
+      if (!text) {
+        alert('Please enter a sentence.');
+        return;
+      }
+
+      runBtn.disabled = true;
+      compareBothBtn.disabled = true;
+      runBtn.textContent = 'Running…';
+      resultCard.classList.add('hidden');
+      compareCard.classList.add('hidden');
+
+      try {
+        const data = await runPredict(mode);
+        let extra = '';
+        if (data.setup === 'no_target') {
+          extra = ` · inferred: "${data.inferred_target || data.target_used || '?'}"`;
+          if (data.target_matches_gold != null) {
+            extra += data.target_matches_gold ? ' · matches gold' : ' · does not match gold';
+          }
+        }
+        polarityEl.textContent = `${data.polarity} (${data.model_id}, ${data.mode}, ${data.setup})${extra}`;
+        polarityEl.className = 'result-polarity ' + data.polarity;
+        renderSteps(data);
+        resultCard.classList.remove('hidden');
+      } catch (e) {
+        alert(e.message);
+      } finally {
+        runBtn.disabled = false;
+        compareBothBtn.disabled = false;
+        runBtn.textContent = 'Analyze sentiment';
+      }
+    });
+
+    compareBothBtn.addEventListener('click', async () => {
+      const text = textEl.value.trim();
+      const target = targetEl.value.trim();
+      if (!text) {
+        alert('Please enter a sentence.');
+        return;
+      }
+      runBtn.disabled = true;
+      compareBothBtn.disabled = true;
+      compareBothBtn.textContent = 'Running both…';
+      compareCard.classList.add('hidden');
+
+      try {
+        const [thor, prompt] = await Promise.all([
+          runPredict('thor'),
+          runPredict('prompt'),
+        ]);
+        const ex = exampleMap[examplesEl.value];
+        const gold = ex?.gold_polarity;
+        compareResults.innerHTML = `
+          <p class="gold">${gold ? `Gold: <strong>${gold}</strong> · ` : ''}Model: ${modelIdEl.value}</p>
+          <p><span class="result-polarity ${thor.polarity}" style="font-size:1.1rem">THOR: ${thor.polarity}</span></p>
+          <p><span class="result-polarity ${prompt.polarity}" style="font-size:1.1rem">1-step: ${prompt.polarity}</span></p>
+        `;
+        compareCard.classList.remove('hidden');
+      } catch (e) {
+        alert(e.message);
+      } finally {
+        runBtn.disabled = false;
+        compareBothBtn.disabled = false;
+        compareBothBtn.textContent = 'Compare both modes';
+      }
+    });
+
+    function escapeHtml(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    loadHealth();
+    loadExamples();
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+{
+  "model": "google/flan-t5-base",
+  "setup": "no_target",
+  "created_at": "2026-06-04T09:44:44.203598Z",
+  "implicit_only": true,
+  "total": 442,
+  "thor_accuracy": 0.0928,
+  "prompt_accuracy": 0.1018,
+  "both_correct": 41,
+  "both_wrong": 397,
+  "thor_wins_count": 0,
+  "prompt_wins_count": 4,
+  "thor_wins": [],
+  "prompt_wins": [
+    {
+      "id": "laptops:395:3:Screen resolution",
+      "domain": "laptops",
+      "text": "Cons: Screen resolution.",
+      "target": "Screen resolution",
+      "gold_polarity": "negative",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative",
+      "setup": "no_target",
+      "inferred_target": "screen resolution",
+      "target_matches_gold": true
+    },
+    {
+      "id": "laptops:96:1:performance and feature set of the hardware",
+      "domain": "laptops",
+      "text": "Instead, I'll focus more on the actual performance and feature set of the hardware itself so you can make an educated decision on which Mac to buy.",
+      "target": "performance and feature set of the hardware",
+      "gold_polarity": "neutral",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "neutral",
+      "setup": "no_target",
+      "inferred_target": "hardware",
+      "target_matches_gold": true
+    },
+    {
+      "id": "laptops:834:1:Windows 7",
+      "domain": "laptops",
+      "text": "A veryimportant feature is Firewire 800 which in my experience works better then USB3 (in PC enabled with USB3)I was not originally sold on the MAC OS I felt it was inferior in many ways To Windows 7.",
+      "target": "Windows 7",
+      "gold_polarity": "positive",
+      "implicit": true,
+      "thor_pred": "negative",
+      "prompt_pred": "positive",
+      "setup": "no_target",
+      "inferred_target": "Windows 7",
+      "target_matches_gold": true
+    },
+    {
+      "id": "restaurants:33071731#1007204#6:gratuity",
+      "domain": "restaurants",
+      "text": "15% gratuity automatically added to the bill.",
+      "target": "gratuity",
+      "gold_polarity": "negative",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative",
+      "setup": "no_target",
+      "inferred_target": "gratuity",
+      "target_matches_gold": true
+    }
+  ]
+}

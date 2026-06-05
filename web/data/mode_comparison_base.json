@@ -1,0 +1,156 @@
+{
+  "model": "google/flan-t5-base",
+  "created_at": "2026-06-04T09:23:09.070671Z",
+  "implicit_only": true,
+  "total": 442,
+  "thor_accuracy": 0.3507,
+  "prompt_accuracy": 0.3688,
+  "both_correct": 152,
+  "both_wrong": 276,
+  "thor_wins_count": 3,
+  "prompt_wins_count": 11,
+  "thor_wins": [
+    {
+      "id": "laptops:898:3:wakes",
+      "domain": "laptops",
+      "text": "It wakes in less than a second when I open the lid.",
+      "target": "wakes",
+      "gold_polarity": "positive",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative"
+    },
+    {
+      "id": "laptops:578:1:regular hard drive",
+      "domain": "laptops",
+      "text": "I was concerned that the downgrade to the regular hard drive would make it unacceptably slow but I need not have worried - this machine is the fastest I have ever owned...",
+      "target": "regular hard drive",
+      "gold_polarity": "positive",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative"
+    },
+    {
+      "id": "restaurants:35668126#536759#4:blue bar area",
+      "domain": "restaurants",
+      "text": "Dug the blue bar area too.",
+      "target": "blue bar area",
+      "gold_polarity": "positive",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative"
+    }
+  ],
+  "prompt_wins": [
+    {
+      "id": "laptops:503:1:quality",
+      "domain": "laptops",
+      "text": "Can you buy any laptop that matches the quality of a MacBook?",
+      "target": "quality",
+      "gold_polarity": "positive",
+      "implicit": true,
+      "thor_pred": "negative",
+      "prompt_pred": "positive"
+    },
+    {
+      "id": "laptops:269:1:itune",
+      "domain": "laptops",
+      "text": "On start up it asks endless questions just so itune can sell you more of their products.",
+      "target": "itune",
+      "gold_polarity": "negative",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative"
+    },
+    {
+      "id": "laptops:1:26:scanning",
+      "domain": "laptops",
+      "text": "The only issue came when I tried scanning to the mac.",
+      "target": "scanning",
+      "gold_polarity": "negative",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative"
+    },
+    {
+      "id": "laptops:181:1:OS",
+      "domain": "laptops",
+      "text": "After fumbling around with the OS I started searching the internet for a fix and found a number of forums on fixing the issue.",
+      "target": "OS",
+      "gold_polarity": "negative",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative"
+    },
+    {
+      "id": "laptops:786:1275:portability",
+      "domain": "laptops",
+      "text": "I want the portability of a tablet, without the limitations of a tablet and that's where this laptop comes into play.",
+      "target": "portability",
+      "gold_polarity": "positive",
+      "implicit": true,
+      "thor_pred": "negative",
+      "prompt_pred": "positive"
+    },
+    {
+      "id": "laptops:787:619:install Mountain Lion",
+      "domain": "laptops",
+      "text": "I had to install Mountain Lion and it took a good two hours.",
+      "target": "install Mountain Lion",
+      "gold_polarity": "negative",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative"
+    },
+    {
+      "id": "restaurants:11351513#832512#1:waitress's",
+      "domain": "restaurants",
+      "text": "the two waitress's looked like they had been sucking on lemons.",
+      "target": "waitress's",
+      "gold_polarity": "negative",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative"
+    },
+    {
+      "id": "restaurants:35390148#588852#4:service",
+      "domain": "restaurants",
+      "text": "How can hope to stay in business with service like this?",
+      "target": "service",
+      "gold_polarity": "negative",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative"
+    },
+    {
+      "id": "restaurants:35886114#1249751#0:argentine chorizo appetizer",
+      "domain": "restaurants",
+      "text": "The lone argentine chorizo appetizer at $8.95 was a heavy fennel flavored Italian sausage like the ones that sell for $2.99/lb at the store.",
+      "target": "argentine chorizo appetizer",
+      "gold_polarity": "negative",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative"
+    },
+    {
+      "id": "restaurants:33071731#1007204#6:bill",
+      "domain": "restaurants",
+      "text": "15% gratuity automatically added to the bill.",
+      "target": "bill",
+      "gold_polarity": "negative",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative"
+    },
+    {
+      "id": "restaurants:33071731#1007204#6:gratuity",
+      "domain": "restaurants",
+      "text": "15% gratuity automatically added to the bill.",
+      "target": "gratuity",
+      "gold_polarity": "negative",
+      "implicit": true,
+      "thor_pred": "positive",
+      "prompt_pred": "negative"
+    }
+  ]
+}
