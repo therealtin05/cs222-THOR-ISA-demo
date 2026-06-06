@@ -38,7 +38,7 @@ Results are saved to `web/data/mode_comparison_base.json` and appear in the exam
 ## Setup
 
 ```bash
-cd THOR-ISA
+cd cs222-THOR-ISA-demo
 python3 -m virtualenv .venv   # use this if `python3 -m venv` fails (needs python3-venv on Ubuntu)
 source .venv/bin/activate
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
