@@ -50,7 +50,9 @@ First run downloads the model from Hugging Face (~1GB).
 ## Run
 
 From the `THOR-ISA` directory (so `src` imports resolve):
-
+```bash
+uvicorn web.app:app --host 0.0.0.0 --port 8000 --reload
+```
 
 
 Open **[http://localhost:8000](http://localhost:8000)**

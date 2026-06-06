@@ -258,12 +258,25 @@
     }
 
     async function loadExamples() {
-      const r = await fetch('/api/examples');
-      const data = await r.json();
-      addOptionGroup('Curated implicit (gold labels)', data.curated || []);
-      addOptionGroup('Base: THOR correct, 1-step wrong', data.thor_wins || []);
-      addOptionGroup('Base: 1-step correct, THOR wrong', data.prompt_wins || []);
+      try {
+        const r = await fetch('/api/examples');
+        const data = await r.json();
+        addOptionGroup('Curated implicit (gold labels)', data.curated || []);
+        addOptionGroup('Base: THOR correct, 1-step wrong', data.thor_wins || []);
+        addOptionGroup('Base: 1-step correct, THOR wrong', data.prompt_wins || []);
 
+        const s = data.comparison_stats;
+        if (s && s.available) {
+          compareStatsEl.textContent =
+            `Eval (flan-t5-base, implicit test, n=${s.total}): THOR ${(s.thor_accuracy * 100).toFixed(1)}% · ` +
+            `1-step ${(s.prompt_accuracy * 100).toFixed(1)}% · ` +
+            `THOR wins ${s.thor_wins_count} · 1-step wins ${s.prompt_wins_count}`;
+          compareStatsEl.classList.remove('hidden');
+        }
+      } catch (e) {
+        console.error('Failed to load examples', e);
+      }
+    }
 
     examplesEl.addEventListener('change', () => {
       const ex = exampleMap[examplesEl.value];
@@ -299,15 +312,15 @@
     }
 
     function renderSteps(data) {
-        const stepNames = {
-          target_discovery: 'Step 0 — Discover target/aspect',
-          aspect: 'Step 1 — Fine-grained aspect',
-          opinion: 'Step 2 — Opinion',
-          polarity_reason: 'Step 3 — Polarity reasoning',
-          label: 'Step 4 — Final label',
-          direct: 'Direct prompt (target given)',
-          direct_no_target: 'Direct prompt (no target)',
-        };
+      const stepNames = {
+        target_discovery: 'Step 0 — Discover target/aspect',
+        aspect: 'Step 1 — Fine-grained aspect',
+        opinion: 'Step 2 — Opinion',
+        polarity_reason: 'Step 3 — Polarity reasoning',
+        label: 'Step 4 — Final label',
+        direct: 'Direct prompt (target given)',
+        direct_no_target: 'Direct prompt (no target)',
+      };
       stepsEl.innerHTML = (data.steps || []).map((s) => `
         <div class="step">
           <h4>${stepNames[s.name] || s.name}</h4>
